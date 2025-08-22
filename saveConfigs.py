@@ -19,7 +19,9 @@ def create_json_config(data_tuple):
         "value9": data_tuple[9],
         "value10": data_tuple[10],
         "value11": data_tuple[12],
-        "value12": data_tuple[13]
+        "value12": data_tuple[13],
+        "value13": data_tuple[14],
+        "value14": data_tuple[15]
 
     }
 
@@ -50,17 +52,19 @@ def open_json_config():
                 value10 = data['value10']
                 value11 = data['value11']
                 value12 = data['value12']
+                value13 = data.get('value13', '')
+                value14 = data.get('value14', '')
 
-                return value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12
+                return value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14
         else:
 
-            return "", "", "", "", 0, "", "", "", "", "", "", ""
+            return "", "", "", "", 0, "", "", "", "", "", "", "", "", ""
 
     except Exception as e:
 
         messagebox.showerror("Error", f"Something went wrong when loading your config.json!\n\n{str(e)}")
 
-        return "", "", "", "", 0, "", "", "", "", "", "", ""
+        return "", "", "", "", 0, "", "", "", "", "", "", "", "", ""
 
 
 def save_key_configs(data_tuple):
@@ -85,5 +89,9 @@ def save_key_configs(data_tuple):
     globalVariables.gt_buffer_hotkey = data_tuple[12]
 
     globalVariables.gt_buffer_delay = data_tuple[13]
+
+    globalVariables.la_buffer_hotkey = data_tuple[14]
+
+    globalVariables.la_buffer_delay = data_tuple[15]
 
     create_json_config(data_tuple)

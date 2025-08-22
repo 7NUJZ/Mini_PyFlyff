@@ -1,0 +1,9 @@
+# Mini PyFlyff Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core dependencies
+keyboard>=1.13.0
+pywin32>=306
+
+# Build dependencies (optional, only needed for building executable)
+pyinstaller>=5.0

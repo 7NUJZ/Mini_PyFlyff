@@ -70,7 +70,7 @@ def buffer_loop():
 
         globalVariables.buffer_is_on = False
 
-        messagebox.showerror("Error", f"Something wrong with GT Buffer!\n\n{str(e)}")
+        messagebox.showerror("Error", f"Something wrong with Buffer!\n\n{str(e)}")
 
 
 def gt_buffer():
@@ -120,6 +120,61 @@ def gt_buffer():
         except Exception as e:
 
             messagebox.showerror("Error", f"Something wrong with GT Buffer!\n\n{str(e)}")
+
+            time.sleep(5)
+
+            continue
+
+        time.sleep(0.5)
+
+
+def la_buffer():
+    while True:
+
+        try:
+
+            if not globalVariables.buffer_is_going:
+
+                if globalVariables.la_buffer:
+
+                    countdown = globalVariables.la_buffer_delay
+
+                    if countdown:
+                        countdown = float(globalVariables.la_buffer_delay)
+
+                    default_countdown = 45
+
+                    windowsAPI.windows_api(globalVariables.la_buffer_hotkey)
+
+                    if globalVariables.la_buffer_delay:
+
+                        while countdown:
+
+                            if globalVariables.la_buffer_delay:
+
+                                if globalVariables.la_buffer:
+
+                                    countdown = countdown - 1
+
+                                    time.sleep(1)
+                                else:
+                                    break
+                    else:
+                        while default_countdown:
+
+                            if globalVariables.la_buffer:
+
+                                default_countdown = default_countdown - 1
+
+                                time.sleep(1)
+                            else:
+                                break
+                else:
+                    break
+
+        except Exception as e:
+
+            messagebox.showerror("Error", f"Something wrong with LA Buffer!\n\n{str(e)}")
 
             time.sleep(5)
 

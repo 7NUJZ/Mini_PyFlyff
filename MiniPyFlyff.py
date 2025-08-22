@@ -1,4 +1,4 @@
-from tkinter import Button, Label, Entry, X, LEFT, RIGHT, LabelFrame, Frame, Checkbutton, IntVar, Menu, END, tix
+from tkinter import Button, Label, Entry, X, LEFT, RIGHT, LabelFrame, Frame, Checkbutton, IntVar, Menu, END, Tk, Toplevel
 
 import globalVariables
 import keyboardListener
@@ -10,29 +10,46 @@ import panicButton
 
 
 def panic():
-    button_buffer_disable_enable["text"] = "Enable"
-
-    button_alt_controller_enable_disable["text"] = "Enable"
-
-    button_macro_loop_enable_disable["text"] = "Enable"
-
-    gt_checkbox_var.set(False)
-
-    panicButton.set_all_to_false()
+    try:
+        button_buffer_disable_enable["text"] = "Enable"
+        button_alt_controller_enable_disable["text"] = "Enable"
+        button_macro_loop_enable_disable["text"] = "Enable"
+        gt_checkbox_var.set(False)
+        la_checkbox_var.set(False)
+        panicButton.set_all_to_false()
+        print("Panic button activated - all processes stopped")
+    except Exception as e:
+        print(f"Error in panic function: {e}")
 
 
 def load_config():
-    entry_alt_controller_hotkeys.insert(END, saveConfigs.open_json_config()[0])
-    entry_macro_loop_hotkey.insert(END, saveConfigs.open_json_config()[1])
-    entry_macro_loop_delays.insert(END, saveConfigs.open_json_config()[2])
-    entry_macro_loop_shortcut.insert(END, saveConfigs.open_json_config()[3])
-    entry_buffer_hotkeys.insert(END, saveConfigs.open_json_config()[5])
-    entry_buffs_hotbar.insert(END, saveConfigs.open_json_config()[6])
-    entry_previous_hotbar.insert(END, saveConfigs.open_json_config()[7])
-    entry_buffer_delay.insert(END, saveConfigs.open_json_config()[8])
-    entry_buffer_shortcut.insert(END, saveConfigs.open_json_config()[9])
-    entry_GT_hotkey.insert(END, saveConfigs.open_json_config()[10])
-    entry_GT_delay.insert(END, saveConfigs.open_json_config()[11])
+    try:
+        config_data = saveConfigs.open_json_config()
+
+        # Clear existing entries first
+        for entry in [entry_alt_controller_hotkeys, entry_macro_loop_hotkey, entry_macro_loop_delays,
+                     entry_macro_loop_shortcut, entry_buffer_hotkeys, entry_buffs_hotbar,
+                     entry_previous_hotbar, entry_buffer_delay, entry_buffer_shortcut,
+                     entry_GT_hotkey, entry_GT_delay, entry_LA_hotkey, entry_LA_delay]:
+            entry.delete(0, END)
+
+        # Load configuration data
+        entry_alt_controller_hotkeys.insert(END, config_data[0])
+        entry_macro_loop_hotkey.insert(END, config_data[1])
+        entry_macro_loop_delays.insert(END, config_data[2])
+        entry_macro_loop_shortcut.insert(END, config_data[3])
+        entry_buffer_hotkeys.insert(END, config_data[5])
+        entry_buffs_hotbar.insert(END, config_data[6])
+        entry_previous_hotbar.insert(END, config_data[7])
+        entry_buffer_delay.insert(END, config_data[8])
+        entry_buffer_shortcut.insert(END, config_data[9])
+        entry_GT_hotkey.insert(END, config_data[10])
+        entry_GT_delay.insert(END, config_data[11])
+        entry_LA_hotkey.insert(END, config_data[12])
+        entry_LA_delay.insert(END, config_data[13])
+    except Exception as e:
+        print(f"Error loading config: {e}")
+        # Continue with empty fields if config loading fails
 
     random_delay_checkbox_var.set(int(saveConfigs.open_json_config()[4]))
 
@@ -67,6 +84,12 @@ def load_config():
     entry_GT_delay.config(validate="key")
     entry_GT_delay.config(validatecommand=(validation_buffer_delays, "%S"))
 
+    entry_LA_hotkey.config(validate="key")
+    entry_LA_hotkey.config(validatecommand=(validation_buffer_key, "%S"))
+
+    entry_LA_delay.config(validate="key")
+    entry_LA_delay.config(validatecommand=(validation_buffer_delays, "%S"))
+
 
 def save_data():
     data = (entry_alt_controller_hotkeys.get(),
@@ -82,13 +105,19 @@ def save_data():
             entry_buffer_shortcut.get(),
             toolControl.start_stop_buffer,
             entry_GT_hotkey.get(),
-            entry_GT_delay.get())
+            entry_GT_delay.get(),
+            entry_LA_hotkey.get(),
+            entry_LA_delay.get())
 
     return data
 
 
 def gt_checkbutton_state():
     toolControl.gt_checkbutton_state(gt_checkbox_var)
+
+
+def la_checkbutton_state():
+    toolControl.la_checkbutton_state(la_checkbox_var)
 
 
 def random_delay_checkbutton_state():
@@ -99,11 +128,55 @@ def random_delay_checkbutton_state():
 
 
 def create_tooltip(widget, text):
-    balloon = tix.Balloon(widget, initwait=300)
-    balloon.bind_widget(widget, balloonmsg=text)
+    def on_enter(event):
+        try:
+            # Destroy any existing tooltip
+            if hasattr(widget, 'tooltip') and widget.tooltip:
+                widget.tooltip.destroy()
+
+            tooltip = Toplevel()
+            tooltip.wm_overrideredirect(True)
+            tooltip.wm_attributes('-topmost', True)
+
+            # Calculate position to keep tooltip on screen
+            x = event.x_root + 10
+            y = event.y_root + 10
+
+            # Get screen dimensions
+            screen_width = tooltip.winfo_screenwidth()
+            screen_height = tooltip.winfo_screenheight()
+
+            # Adjust position if tooltip would go off screen
+            if x + 200 > screen_width:
+                x = event.x_root - 210
+            if y + 50 > screen_height:
+                y = event.y_root - 60
+
+            tooltip.wm_geometry(f"+{x}+{y}")
+
+            label = Label(tooltip, text=text, background="lightyellow",
+                         relief="solid", borderwidth=1, font=("Arial", 8),
+                         wraplength=200, justify="left")
+            label.pack()
+            widget.tooltip = tooltip
+        except Exception:
+            # Silently handle any tooltip creation errors
+            pass
+
+    def on_leave(event):
+        try:
+            if hasattr(widget, 'tooltip') and widget.tooltip:
+                widget.tooltip.destroy()
+                widget.tooltip = None
+        except Exception:
+            # Silently handle any tooltip destruction errors
+            pass
+
+    widget.bind("<Enter>", on_enter)
+    widget.bind("<Leave>", on_leave)
 
 
-root = tix.Tk()
+root = Tk()
 
 menu_bar = Menu(root)
 
@@ -117,7 +190,7 @@ menu_bar.add_cascade(label="Menu", menu=menu)
 root.config(menu=menu_bar)
 
 window_width = 262
-window_height = 465
+window_height = 520
 
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
@@ -139,6 +212,7 @@ validation_buffer_key = root.register(miscs.validate_input_buffer_key)
 
 random_delay_checkbox_var = IntVar()
 gt_checkbox_var = IntVar()
+la_checkbox_var = IntVar()
 
 label_frame_1 = LabelFrame(root)
 label_frame_1.pack(fill=X, padx=2, pady=2)
@@ -287,6 +361,46 @@ entry_GT_delay = Entry(frame_buffer_2, width=5, validate="none")
 entry_GT_delay.pack(side=LEFT, padx=1, pady=1)
 create_tooltip(entry_GT_delay, "Delay to use GT")
 
-load_config()
+# LA Buffer section - in the same frame as GT
+frame_buffer_5 = Frame(label_frame_4)
+frame_buffer_5.pack(fill=X, padx=1, pady=1)
 
-root.mainloop()
+checkbutton_la = Checkbutton(frame_buffer_5, text="Activate LA", variable=la_checkbox_var, command=la_checkbutton_state)
+checkbutton_la.pack(side=LEFT, padx=1, pady=1)
+create_tooltip(checkbutton_la, "Mark this box to initiate the LA Buffer.")
+
+label_LA_hotkey = Label(frame_buffer_5, text="LA Key:")
+label_LA_hotkey.pack(side=LEFT, padx=1, pady=1)
+create_tooltip(label_LA_hotkey, "Hotkey to use LA")
+
+entry_LA_hotkey = Entry(frame_buffer_5, width=4, validate="none")
+entry_LA_hotkey.pack(side=LEFT, padx=1, pady=1)
+create_tooltip(entry_LA_hotkey, "Hotkey to use LA")
+
+label_LA_delay = Label(frame_buffer_5, text="LA Delay:")
+label_LA_delay.pack(side=LEFT, padx=1, pady=1)
+create_tooltip(label_LA_delay, "Delay to use LA")
+
+entry_LA_delay = Entry(frame_buffer_5, width=5, validate="none")
+entry_LA_delay.pack(side=LEFT, padx=1, pady=1)
+create_tooltip(entry_LA_delay, "Delay to use LA")
+
+def main():
+    """Main application entry point with error handling"""
+    try:
+        load_config()
+        print("Mini PyFlyff started successfully")
+        root.mainloop()
+    except Exception as e:
+        print(f"Critical error in main application: {e}")
+        import traceback
+        traceback.print_exc()
+    finally:
+        # Cleanup on exit
+        try:
+            panicButton.set_all_to_false()
+        except:
+            pass
+
+if __name__ == "__main__":
+    main()

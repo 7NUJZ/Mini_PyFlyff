@@ -7,10 +7,12 @@ import threading
 macro_loop_running = False
 buffer_loop_running = False
 gt_buffer_running = False
+la_buffer_running = False
 
 macro_loop_lock = threading.Lock()
 buffer_loop_lock = threading.Lock()
 gt_buffer_lock = threading.Lock()
+la_buffer_lock = threading.Lock()
 
 
 def enable_disable_alt_control(button):
@@ -162,3 +164,40 @@ def run_gt_buffer():
         with gt_buffer_lock:
 
             gt_buffer_running = False
+
+
+def la_checkbutton_state(la_checkbox_var):
+    global la_buffer_running
+
+    with la_buffer_lock:
+
+        if la_checkbox_var.get() == 1:
+
+            if la_buffer_running:
+                print("LA Buffer is already running!")
+
+                return
+
+            globalVariables.la_buffer = True
+
+            la_buffer_running = True
+
+            miscs.multithreading(lambda: run_la_buffer())
+
+        else:
+
+            globalVariables.la_buffer = False
+
+
+def run_la_buffer():
+    global la_buffer_running
+
+    try:
+
+        bufferLoop.la_buffer()
+
+    finally:
+
+        with la_buffer_lock:
+
+            la_buffer_running = False

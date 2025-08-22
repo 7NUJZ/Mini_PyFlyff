@@ -17,3 +17,5 @@ def set_all_to_false():
     globalVariables.buffer_is_going = False
 
     globalVariables.gt_buffer = False
+
+    globalVariables.la_buffer = False
