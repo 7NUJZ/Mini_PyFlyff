@@ -21,7 +21,13 @@ def create_json_config(data_tuple):
         "value11": data_tuple[12],
         "value12": data_tuple[13],
         "value13": data_tuple[14],
-        "value14": data_tuple[15]
+        "value14": data_tuple[15],
+        "value15": data_tuple[16],
+        "value16": data_tuple[17],
+        "value17": data_tuple[18],
+        "value18": data_tuple[19],
+        "value19": data_tuple[20],
+        "value20": data_tuple[21]
 
     }
 
@@ -54,17 +60,23 @@ def open_json_config():
                 value12 = data['value12']
                 value13 = data.get('value13', '')
                 value14 = data.get('value14', '')
+                value15 = data.get('value15', 'Focused Window')
+                value16 = data.get('value16', 'Focused Window')
+                value17 = data.get('value17', 'Focused Window')
+                value18 = data.get('value18', 'Focused Window')
+                value19 = data.get('value19', 'Focused Window')
+                value20 = data.get('value20', 'Focused Window')
 
-                return value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14
+                return value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19, value20
         else:
 
-            return "", "", "", "", 0, "", "", "", "", "", "", "", "", ""
+            return "", "", "", "", 0, "", "", "", "", "", "", "", "", "", "Focused Window", "Focused Window", "Focused Window", "Focused Window", "Focused Window", "Focused Window"
 
     except Exception as e:
 
         messagebox.showerror("Error", f"Something went wrong when loading your config.json!\n\n{str(e)}")
 
-        return "", "", "", "", 0, "", "", "", "", "", "", "", "", ""
+        return "", "", "", "", 0, "", "", "", "", "", "", "", "", "", "Focused Window", "Focused Window", "Focused Window", "Focused Window", "Focused Window", "Focused Window"
 
 
 def save_key_configs(data_tuple):
@@ -93,5 +105,14 @@ def save_key_configs(data_tuple):
     globalVariables.la_buffer_hotkey = data_tuple[14]
 
     globalVariables.la_buffer_delay = data_tuple[15]
+
+    globalVariables.target_browser = data_tuple[16]
+
+    # Set feature-specific browser targets
+    globalVariables.la_target_browser = data_tuple[17]
+    globalVariables.gt_target_browser = data_tuple[18]
+    globalVariables.alt_target_browser = data_tuple[19]
+    globalVariables.macro_target_browser = data_tuple[20]
+    globalVariables.buffer_target_browser = data_tuple[21]
 
     create_json_config(data_tuple)

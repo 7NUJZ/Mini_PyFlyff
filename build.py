@@ -8,6 +8,7 @@ import os
 import sys
 import subprocess
 import shutil
+import time
 from pathlib import Path
 
 def check_dependencies():
@@ -97,11 +98,31 @@ def verify_build():
 def create_release_package():
     """Create a release package with the executable and necessary files"""
     print("Creating release package...")
-    
+
     release_dir = Path('release')
     if release_dir.exists():
-        shutil.rmtree(release_dir)
-    
+        try:
+            # Try to remove the directory
+            shutil.rmtree(release_dir)
+        except PermissionError:
+            print("⚠️  Warning: Could not remove existing release directory.")
+            print("   This might be because the executable is still running.")
+            print("   Please close any running instances and try again.")
+
+            # Try to kill any running processes
+            try:
+                import subprocess
+                subprocess.run(['taskkill', '/F', '/IM', 'MiniPyFlyff.exe'],
+                             capture_output=True, check=False)
+                print("   Attempted to close running executable...")
+                time.sleep(2)  # Wait a moment
+                shutil.rmtree(release_dir)
+                print("   ✓ Successfully removed release directory")
+            except Exception as e:
+                print(f"   Could not automatically fix the issue: {e}")
+                print("   Please manually close MiniPyFlyff.exe and delete the 'release' folder")
+                return False
+
     release_dir.mkdir()
     
     # Copy executable
@@ -124,7 +145,7 @@ pause
 """
     with open(release_dir / 'run.bat', 'w') as f:
         f.write(batch_content)
-    
+
     print(f"✓ Release package created in: {release_dir}")
     return True
 
@@ -159,14 +180,16 @@ def main():
     print("\n" + "-" * 40)
     
     # Step 5: Create release package
-    create_release_package()
-    
+    if not create_release_package():
+        print("\n⚠️  Release package creation failed, but executable is available in 'dist' folder.")
+        return False
+
     print("\n" + "=" * 60)
     print("BUILD COMPLETED SUCCESSFULLY!")
     print("=" * 60)
     print("Your executable is ready in the 'release' directory.")
     print("You can distribute the entire 'release' folder.")
-    
+
     return True
 
 if __name__ == "__main__":

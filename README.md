@@ -16,8 +16,8 @@ _Last binary update: Mar 06, 2025_
 ## 🛠️ Requirements
 
 - **Python 3.7+**: Download from [python.org](https://www.python.org/)
-- **Mozilla Firefox**: Download it [here](https://www.mozilla.org/).
-- **Use with your alt**: Mini PyFlyff is designed to work exclusively with Mozilla Firefox, specifically sending keystrokes to it.
+- **Any Modern Browser**: Works with Firefox, Chrome, Opera GX, Edge, and more!
+- **Flexible Targeting**: Can send keys to a specific browser or the currently focused window
 
 ### Dependencies
 
@@ -61,6 +61,14 @@ python build.py
 ---
 
 ## 💡 Features (New and Improved!)
+
+### **🎯 Browser Targeting** (NEW!)
+
+Choose your target browser or window:
+
+- **Focused Window**: Sends keys to whatever window is currently active (recommended)
+- **Specific Browser**: Target Firefox, Chrome, Opera GX, Edge, or other browsers
+- **Flexible Setup**: Perfect for multi-browser setups or different game clients
 
 ### **Alt Controller**
 

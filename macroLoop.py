@@ -18,7 +18,7 @@ def macro_loop():
 
                         if globalVariables.macro_loop_on and globalVariables.macro_loop_enable_disabled and not globalVariables.buffer_is_going:
 
-                            windowsAPI.windows_api(key)
+                            windowsAPI.windows_api(key, "macro_loop")
 
                             if globalVariables.macro_loop_random_delay == 1:
 

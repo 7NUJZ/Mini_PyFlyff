@@ -31,11 +31,11 @@ def buffer_loop():
 
                         buffer_countdown = 3
 
-                    windowsAPI.windows_api(globalVariables.buffs_hotbar)
+                    windowsAPI.windows_api(globalVariables.buffs_hotbar, "buffer")
 
                     time.sleep(0.5)
 
-                    windowsAPI.windows_api(key)
+                    windowsAPI.windows_api(key, "buffer")
 
                     while buffer_countdown:
 
@@ -50,7 +50,7 @@ def buffer_loop():
                 else:
                     globalVariables.buffer_is_going = False
 
-                    windowsAPI.windows_api(globalVariables.previous_hotbar)
+                    windowsAPI.windows_api(globalVariables.previous_hotbar, "buffer")
 
                     globalVariables.buffer_is_on = False
 
@@ -58,7 +58,7 @@ def buffer_loop():
 
         globalVariables.buffer_is_going = False
 
-        windowsAPI.windows_api(globalVariables.previous_hotbar)
+        windowsAPI.windows_api(globalVariables.previous_hotbar, "buffer")
 
         globalVariables.buffer_is_on = False
 
@@ -66,7 +66,7 @@ def buffer_loop():
 
         globalVariables.buffer_is_going = False
 
-        windowsAPI.windows_api(globalVariables.previous_hotbar)
+        windowsAPI.windows_api(globalVariables.previous_hotbar, "buffer")
 
         globalVariables.buffer_is_on = False
 
@@ -89,7 +89,7 @@ def gt_buffer():
 
                     default_countdown = 45
 
-                    windowsAPI.windows_api(globalVariables.gt_buffer_hotkey)
+                    windowsAPI.windows_api(globalVariables.gt_buffer_hotkey, "gt_buffer")
 
                     if globalVariables.gt_buffer_delay:
 
@@ -144,7 +144,7 @@ def la_buffer():
 
                     default_countdown = 45
 
-                    windowsAPI.windows_api(globalVariables.la_buffer_hotkey)
+                    windowsAPI.windows_api(globalVariables.la_buffer_hotkey, "la_buffer")
 
                     if globalVariables.la_buffer_delay:
 
