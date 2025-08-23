@@ -19,20 +19,12 @@ BROWSER_CLASSES = {
 def get_target_window(feature_type="default"):
     """Get the target window handle based on browser selection for specific feature"""
     try:
-        # Get browser choice based on feature type
+        # Simplified: Only LA Buffer gets its own targeting, everything else shares one setting
         if feature_type == "la_buffer":
             browser_choice = getattr(globalVariables, 'la_target_browser', 'Focused Window')
-        elif feature_type == "gt_buffer":
-            browser_choice = getattr(globalVariables, 'gt_target_browser', 'Focused Window')
-        elif feature_type == "alt_controller":
-            browser_choice = getattr(globalVariables, 'alt_target_browser', 'Focused Window')
-        elif feature_type == "macro_loop":
-            browser_choice = getattr(globalVariables, 'macro_target_browser', 'Focused Window')
-        elif feature_type == "buffer":
-            browser_choice = getattr(globalVariables, 'buffer_target_browser', 'Focused Window')
         else:
-            # Default/fallback to main browser setting
-            browser_choice = getattr(globalVariables, 'target_browser', 'Focused Window')
+            # All other features (GT, Alt Controller, Macro Loop, Buffer) use the main browser setting
+            browser_choice = getattr(globalVariables, 'main_target_browser', 'Focused Window')
 
         if browser_choice == "Focused Window":
             # Get the currently focused window

@@ -35,12 +35,8 @@ la_buffer_hotkey = None
 la_buffer_delay = None
 
 # Browser targeting configuration
-target_browser = "Focused Window"  # Default to focused window (legacy)
 debug_mode = False
 
-# Feature-specific browser targeting
+# Simplified browser targeting - only 2 settings needed
 la_target_browser = "Focused Window"      # LA Buffer target
-gt_target_browser = "Focused Window"      # GT Buffer target
-alt_target_browser = "Focused Window"     # Alt Controller target
-macro_target_browser = "Focused Window"   # Macro Loop target
-buffer_target_browser = "Focused Window"  # Buffer target
+main_target_browser = "Focused Window"    # All other features (GT, Alt Controller, Macro Loop, Buffer)

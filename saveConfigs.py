@@ -8,26 +8,22 @@ from tkinter import messagebox
 def create_json_config(data_tuple):
     data = {
 
-        "value1": data_tuple[0],
-        "value2": data_tuple[1],
-        "value3": data_tuple[2],
-        "value4": data_tuple[3],
-        "value5": data_tuple[4],
-        "value6": data_tuple[6],
-        "value7": data_tuple[7],
-        "value8": data_tuple[8],
-        "value9": data_tuple[9],
-        "value10": data_tuple[10],
-        "value11": data_tuple[12],
-        "value12": data_tuple[13],
-        "value13": data_tuple[14],
-        "value14": data_tuple[15],
-        "value15": data_tuple[16],
-        "value16": data_tuple[17],
-        "value17": data_tuple[18],
-        "value18": data_tuple[19],
-        "value19": data_tuple[20],
-        "value20": data_tuple[21]
+        "value1": data_tuple[0],   # alt_controller_hotkeys
+        "value2": data_tuple[1],   # macro_loop_hotkey
+        "value3": data_tuple[2],   # macro_loop_delays
+        "value4": data_tuple[3],   # macro_loop_shortcut
+        "value5": data_tuple[4],   # random_delay_checkbox
+        "value6": data_tuple[6],   # buffer_hotkeys
+        "value7": data_tuple[7],   # buffs_hotbar
+        "value8": data_tuple[8],   # previous_hotbar
+        "value9": data_tuple[9],   # buffer_delay
+        "value10": data_tuple[10], # buffer_shortcut
+        "value11": data_tuple[12], # GT_hotkey
+        "value12": data_tuple[13], # GT_delay
+        "value13": data_tuple[14], # LA_hotkey
+        "value14": data_tuple[15], # LA_delay
+        "value15": data_tuple[16], # la_browser
+        "value16": data_tuple[17]  # main_browser
 
     }
 
@@ -55,28 +51,24 @@ def open_json_config():
                 value7 = data['value7']
                 value8 = data['value8']
                 value9 = data['value9']
-                value10 = data['value10']
-                value11 = data['value11']
-                value12 = data['value12']
-                value13 = data.get('value13', '')
-                value14 = data.get('value14', '')
-                value15 = data.get('value15', 'Focused Window')
-                value16 = data.get('value16', 'Focused Window')
-                value17 = data.get('value17', 'Focused Window')
-                value18 = data.get('value18', 'Focused Window')
-                value19 = data.get('value19', 'Focused Window')
-                value20 = data.get('value20', 'Focused Window')
+                value10 = data['value10']  # buffer_shortcut
+                value11 = data['value11']  # GT_hotkey
+                value12 = data['value12']  # GT_delay
+                value13 = data.get('value13', '')  # LA_hotkey
+                value14 = data.get('value14', '')  # LA_delay
+                value15 = data.get('value15', 'Focused Window')  # la_browser
+                value16 = data.get('value16', 'Focused Window')  # main_browser
 
-                return value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19, value20
+                return value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16
         else:
 
-            return "", "", "", "", 0, "", "", "", "", "", "", "", "", "", "Focused Window", "Focused Window", "Focused Window", "Focused Window", "Focused Window", "Focused Window"
+            return "", "", "", "", 0, "", "", "", "", "", "", "", "", "", "Focused Window", "Focused Window"
 
     except Exception as e:
 
         messagebox.showerror("Error", f"Something went wrong when loading your config.json!\n\n{str(e)}")
 
-        return "", "", "", "", 0, "", "", "", "", "", "", "", "", "", "Focused Window", "Focused Window", "Focused Window", "Focused Window", "Focused Window", "Focused Window"
+        return "", "", "", "", 0, "", "", "", "", "", "", "", "", "", "Focused Window", "Focused Window"
 
 
 def save_key_configs(data_tuple):
@@ -98,21 +90,16 @@ def save_key_configs(data_tuple):
 
     keyboardListener.set_buffer_shortcut(data_tuple[10], data_tuple[11])
 
-    globalVariables.gt_buffer_hotkey = data_tuple[12]
+    globalVariables.gt_buffer_hotkey = data_tuple[12]   # GT_hotkey
 
-    globalVariables.gt_buffer_delay = data_tuple[13]
+    globalVariables.gt_buffer_delay = data_tuple[13]    # GT_delay
 
-    globalVariables.la_buffer_hotkey = data_tuple[14]
+    globalVariables.la_buffer_hotkey = data_tuple[14]   # LA_hotkey
 
-    globalVariables.la_buffer_delay = data_tuple[15]
+    globalVariables.la_buffer_delay = data_tuple[15]    # LA_delay
 
-    globalVariables.target_browser = data_tuple[16]
-
-    # Set feature-specific browser targets
-    globalVariables.la_target_browser = data_tuple[17]
-    globalVariables.gt_target_browser = data_tuple[18]
-    globalVariables.alt_target_browser = data_tuple[19]
-    globalVariables.macro_target_browser = data_tuple[20]
-    globalVariables.buffer_target_browser = data_tuple[21]
+    # Set simplified browser targets
+    globalVariables.la_target_browser = data_tuple[16]  # la_browser
+    globalVariables.main_target_browser = data_tuple[17] # main_browser
 
     create_json_config(data_tuple)

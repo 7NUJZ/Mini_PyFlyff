@@ -44,23 +44,16 @@ def load_config():
         entry_previous_hotbar.insert(END, config_data[7])
         entry_buffer_delay.insert(END, config_data[8])
         entry_buffer_shortcut.insert(END, config_data[9])
-        entry_GT_hotkey.insert(END, config_data[10])
-        entry_GT_delay.insert(END, config_data[11])
-        entry_LA_hotkey.insert(END, config_data[12])
-        entry_LA_delay.insert(END, config_data[13])
-        browser_var.set(config_data[14])
+        entry_GT_hotkey.insert(END, config_data[10])   # value11 -> GT_hotkey
+        entry_GT_delay.insert(END, config_data[11])   # value12 -> GT_delay
+        entry_LA_hotkey.insert(END, config_data[12])  # value13 -> LA_hotkey
+        entry_LA_delay.insert(END, config_data[13])   # value14 -> LA_delay
 
-        # Load feature-specific browser settings (with fallback to default)
+        # Load simplified browser settings
+        if len(config_data) > 14:
+            la_browser_var.set(config_data[14] if config_data[14] else "Focused Window")   # value15 -> la_browser
         if len(config_data) > 15:
-            la_browser_var.set(config_data[15] if config_data[15] else "Focused Window")
-        if len(config_data) > 16:
-            gt_browser_var.set(config_data[16] if config_data[16] else "Focused Window")
-        if len(config_data) > 17:
-            alt_browser_var.set(config_data[17] if config_data[17] else "Focused Window")
-        if len(config_data) > 18:
-            macro_browser_var.set(config_data[18] if config_data[18] else "Focused Window")
-        if len(config_data) > 19:
-            buffer_browser_var.set(config_data[19] if config_data[19] else "Focused Window")
+            main_browser_var.set(config_data[15] if config_data[15] else "Focused Window") # value16 -> main_browser
     except Exception as e:
         print(f"Error loading config: {e}")
         # Continue with empty fields if config loading fails
@@ -122,12 +115,8 @@ def save_data():
             entry_GT_delay.get(),
             entry_LA_hotkey.get(),
             entry_LA_delay.get(),
-            browser_var.get(),
             la_browser_var.get(),
-            gt_browser_var.get(),
-            alt_browser_var.get(),
-            macro_browser_var.get(),
-            buffer_browser_var.get())
+            main_browser_var.get())
 
     return data
 
@@ -140,16 +129,6 @@ def la_checkbutton_state():
     toolControl.la_checkbutton_state(la_checkbox_var)
 
 
-def browser_selection_changed():
-    """Handle default browser selection change"""
-    try:
-        selected_browser = browser_var.get()
-        globalVariables.target_browser = selected_browser
-        print(f"Default target browser changed to: {selected_browser}")
-    except Exception as e:
-        print(f"Error changing browser selection: {e}")
-
-
 def la_browser_selection_changed():
     """Handle LA buffer browser selection change"""
     try:
@@ -160,44 +139,14 @@ def la_browser_selection_changed():
         print(f"Error changing LA browser selection: {e}")
 
 
-def gt_browser_selection_changed():
-    """Handle GT buffer browser selection change"""
+def main_browser_selection_changed():
+    """Handle main browser selection change (for all features except LA)"""
     try:
-        selected_browser = gt_browser_var.get()
-        globalVariables.gt_target_browser = selected_browser
-        print(f"GT Buffer target browser changed to: {selected_browser}")
+        selected_browser = main_browser_var.get()
+        globalVariables.main_target_browser = selected_browser
+        print(f"Main target browser changed to: {selected_browser} (affects GT, Alt Controller, Macro Loop, Buffer)")
     except Exception as e:
-        print(f"Error changing GT browser selection: {e}")
-
-
-def alt_browser_selection_changed():
-    """Handle Alt Controller browser selection change"""
-    try:
-        selected_browser = alt_browser_var.get()
-        globalVariables.alt_target_browser = selected_browser
-        print(f"Alt Controller target browser changed to: {selected_browser}")
-    except Exception as e:
-        print(f"Error changing Alt browser selection: {e}")
-
-
-def macro_browser_selection_changed():
-    """Handle Macro Loop browser selection change"""
-    try:
-        selected_browser = macro_browser_var.get()
-        globalVariables.macro_target_browser = selected_browser
-        print(f"Macro Loop target browser changed to: {selected_browser}")
-    except Exception as e:
-        print(f"Error changing Macro browser selection: {e}")
-
-
-def buffer_browser_selection_changed():
-    """Handle Buffer browser selection change"""
-    try:
-        selected_browser = buffer_browser_var.get()
-        globalVariables.buffer_target_browser = selected_browser
-        print(f"Buffer target browser changed to: {selected_browser}")
-    except Exception as e:
-        print(f"Error changing Buffer browser selection: {e}")
+        print(f"Error changing main browser selection: {e}")
 
 
 def random_delay_checkbutton_state():
@@ -269,8 +218,8 @@ menu_bar.add_cascade(label="Menu", menu=menu)
 
 root.config(menu=menu_bar)
 
-window_width = 262
-window_height = 640
+window_width = 350
+window_height = 580
 
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
@@ -293,65 +242,45 @@ validation_buffer_key = root.register(miscs.validate_input_buffer_key)
 random_delay_checkbox_var = IntVar()
 gt_checkbox_var = IntVar()
 la_checkbox_var = IntVar()
-browser_var = StringVar()
 la_browser_var = StringVar()
-gt_browser_var = StringVar()
-alt_browser_var = StringVar()
-macro_browser_var = StringVar()
-buffer_browser_var = StringVar()
+main_browser_var = StringVar()
 
 # Browser Selection Frame
 label_frame_browser = LabelFrame(root, text="Browser Targeting")
 label_frame_browser.pack(fill=X, padx=2, pady=2)
 
-# Main browser selection (legacy support)
-frame_main_browser = Frame(label_frame_browser)
-frame_main_browser.pack(fill=X, padx=1, pady=1)
+# LA Buffer browser selection (first row)
+frame_la_browser = Frame(label_frame_browser)
+frame_la_browser.pack(fill=X, padx=1, pady=1)
 
-label_main_browser = Label(frame_main_browser, text="Default:")
-label_main_browser.pack(side=LEFT, padx=1, pady=1)
-create_tooltip(label_main_browser, "Default browser for features without specific targeting")
+label_la_browser = Label(frame_la_browser, text="LA Buffer:", width=14, anchor="w")
+label_la_browser.pack(side=LEFT, padx=1, pady=1)
+create_tooltip(label_la_browser, "Browser for LA Buffer only")
 
 browser_options = ["Focused Window", "Firefox", "Chrome", "Opera", "Opera GX", "Edge"]
-browser_dropdown = ttk.Combobox(frame_main_browser, textvariable=browser_var,
-                               values=browser_options, state="readonly", width=12)
-browser_dropdown.pack(side=LEFT, padx=2, pady=1)
-browser_dropdown.bind('<<ComboboxSelected>>', lambda e: browser_selection_changed())
-create_tooltip(browser_dropdown, "Default browser targeting")
-
-# Feature-specific browser selections
-frame_feature_browsers = Frame(label_frame_browser)
-frame_feature_browsers.pack(fill=X, padx=1, pady=1)
-
-# LA Buffer browser selection
-label_la_browser = Label(frame_feature_browsers, text="LA:")
-label_la_browser.pack(side=LEFT, padx=1, pady=1)
-create_tooltip(label_la_browser, "Browser for LA Buffer")
-
-la_browser_dropdown = ttk.Combobox(frame_feature_browsers, textvariable=la_browser_var,
-                                  values=browser_options, state="readonly", width=10)
-la_browser_dropdown.pack(side=LEFT, padx=1, pady=1)
+la_browser_dropdown = ttk.Combobox(frame_la_browser, textvariable=la_browser_var,
+                                  values=browser_options, state="readonly", width=15)
+la_browser_dropdown.pack(side=LEFT, padx=2, pady=1)
 la_browser_dropdown.bind('<<ComboboxSelected>>', lambda e: la_browser_selection_changed())
 create_tooltip(la_browser_dropdown, "Target browser for LA Buffer specifically")
 
-# GT Buffer browser selection
-label_gt_browser = Label(frame_feature_browsers, text="GT:")
-label_gt_browser.pack(side=LEFT, padx=1, pady=1)
-create_tooltip(label_gt_browser, "Browser for GT Buffer")
+# Main browser selection for all other features (second row)
+frame_main_browser = Frame(label_frame_browser)
+frame_main_browser.pack(fill=X, padx=1, pady=1)
 
-gt_browser_dropdown = ttk.Combobox(frame_feature_browsers, textvariable=gt_browser_var,
-                                  values=browser_options, state="readonly", width=10)
-gt_browser_dropdown.pack(side=LEFT, padx=1, pady=1)
-gt_browser_dropdown.bind('<<ComboboxSelected>>', lambda e: gt_browser_selection_changed())
-create_tooltip(gt_browser_dropdown, "Target browser for GT Buffer specifically")
+label_main_browser = Label(frame_main_browser, text="Other Features:", width=14, anchor="w")
+label_main_browser.pack(side=LEFT, padx=1, pady=1)
+create_tooltip(label_main_browser, "Browser for GT, Alt Controller, Macro Loop, and Buffer")
+
+main_browser_dropdown = ttk.Combobox(frame_main_browser, textvariable=main_browser_var,
+                                    values=browser_options, state="readonly", width=15)
+main_browser_dropdown.pack(side=LEFT, padx=2, pady=1)
+main_browser_dropdown.bind('<<ComboboxSelected>>', lambda e: main_browser_selection_changed())
+create_tooltip(main_browser_dropdown, "Target browser for GT Buffer, Alt Controller, Macro Loop, and Buffer")
 
 # Set default values
-browser_var.set("Focused Window")
 la_browser_var.set("Focused Window")
-gt_browser_var.set("Focused Window")
-alt_browser_var.set("Focused Window")
-macro_browser_var.set("Focused Window")
-buffer_browser_var.set("Focused Window")
+main_browser_var.set("Focused Window")
 
 label_frame_1 = LabelFrame(root)
 label_frame_1.pack(fill=X, padx=2, pady=2)

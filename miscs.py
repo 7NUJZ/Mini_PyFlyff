@@ -30,7 +30,8 @@ def validate_input_keys(char):
 
 
 def validate_input_buffer_key(char):
-    if char.isalnum():
+    # Allow alphanumeric characters and empty string (for deletion)
+    if char.isalnum() or char == "":
 
         return True
 
@@ -40,7 +41,8 @@ def validate_input_buffer_key(char):
 
 
 def validate_input_buffer_timer(char):
-    if char.isdigit():
+    # Allow digits and empty string (for deletion)
+    if char.isdigit() or char == "":
 
         return True
 
